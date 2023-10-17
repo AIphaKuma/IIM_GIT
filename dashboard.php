@@ -7,7 +7,7 @@ require('model/functions.fn.php');
 	Dashboard
 ===============================*/
 
- if(!isset($_SESSION) OR empty($_SESSION)){
+if(!isset($_SESSION) OR empty($_SESSION)){
 	header('Location: login.php');
 	exit();
 }

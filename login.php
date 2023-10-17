@@ -17,6 +17,7 @@ if (!empty($_POST['email']) && !empty($_POST['password'])) {
     userConnection($db, $email, $password);
 } else {
     $error = 'Champs requis !';
+
 }
 
 
