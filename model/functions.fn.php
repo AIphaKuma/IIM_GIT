@@ -57,38 +57,44 @@ SUMMARY
 		$email -> 			field value : email
 		$password -> 		field value : password
 	*/
-	function userConnection(PDO $db, $email, $password){
-		if(!empty($email) && !empty($password)){
-			//Requête SQL
-			$sql = "SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1";
+function userConnection(PDO $db, $email, $password){
+    // Vérifier si l'utilisateur est déjà connecté
+    if (isset($_SESSION['user'])) {
+        header('Location: dashboard.php');
+        return true;
+    }
 
-			$req = $db->prepare($sql);
-			$req->execute(array(
-				':email' => $email,
-				':password' => $password
-			));
+    // Si l'utilisateur n'est pas connecté, alors tenter de le connecter
+    if (!empty($email) && !empty($password)) {
+        // Requête SQL
+        $sql = "SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1";
 
-			$result = $req->fetch(PDO::FETCH_ASSOC);
+        $req = $db->prepare($sql);
+        $req->execute(array(
+            ':email' => $email,
+            ':password' => $password
+        ));
 
-			//Si le fetch réussi, alors un résultat a été retourné donc le couple email / password est correct
-			if($result == true){
-				
-				//on définit la SESSION
-				$_SESSION['id'] = $result['id'];
-				$_SESSION['username'] = $result['username'];
-				$_SESSION['email'] = $result['email'];
-				$_SESSION['created_at'] = $result['created_at'];
-				$_SESSION['image'] = $result['picture'];
+        $result = $req->fetch(PDO::FETCH_ASSOC);
 
-				return true;
-			}else{
-				return false;
-			}
-		}else{
+        // Si le fetch réussi, alors un résultat a été retourné donc le couple email / password est correct
+        if ($result) {
+            // On définit la SESSION
+            $_SESSION['id'] = $result['id'];
+            $_SESSION['username'] = $result['username'];
+            $_SESSION['email'] = $result['email'];
+            $_SESSION['created_at'] = $result['creatde_at'];
+            $_SESSION['image'] = $result['picture'];
 
-			return false;
-		}
-	}
+            header('Location: dashboard.php');
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
 
 	/*1.3!listMusics
 		return :
